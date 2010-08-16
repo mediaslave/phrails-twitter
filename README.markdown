@@ -1,6 +1,12 @@
-There are a couple of items to set up
+# Introduction
 
-Controller setup:
+This is a plugin that allows you to use phrails to authenticate with twitter.
+
+# Setup
+
+There are a couple of items to set up.
+
+### Controller
 
 class ApplicationController extends Controller
 {
@@ -60,7 +66,7 @@ class ApplicationController extends Controller
 	}
 }
 
-Routes set up:
+### Routes
 
 $Routes->add('twitter-redirect', '/twitter/redirect', 'Twitter', 'redirect');
 $Routes->add('twitter-callback', '/twitter/callback', 'Twitter', 'callback');
