@@ -71,12 +71,31 @@ class TwitterController extends ApplicationController
 		/* If HTTP response is 200 continue otherwise send to connect page to retry */
 		if (200 == $connection->http_code) {
 		  /* The user has been verified and the access tokens can be saved for future use */
-		  $_SESSION['status'] = 'verified';
-			print 'verified';
+			$tuser = $connection->get('account/verify_credentials');
+		  	$user = new TwitterUser();
+			try{
+				$r = $user->conditions('twitter_id = ?', $tuser->id)->findAll(false);
+				$user->props((array)$r);
+			}catch(RecordNotFoundException $e){
+				$user->twitter_id = $tuser->id;
+			}	
+			$user->token = $access_token['oauth_token'];
+			$user->secret = $access_token['oauth_token_secret'];
+			if($user->save()){
+				$this->flash = 'Thank you for logging in with twitter.';
+			}else{
+				$this->flash = 'We have authenticated you with twitter, but we failed on our end.  We have notified the authorities. :(';
+			}
+			$_SESSION['pr-plugin-twitter-id'] = $user->id;
+			
+			//Now unset the access token.
+			unset($_SESSION['access_token']);
+			//Send the user to the homepage.
 			$this->redirectTo(path('root'));
 		} else {
-			print $connection->http_code;
+			//print $connection->http_code;
 		  /* Save HTTP status for error dialog on connnect page.*/
+			$this->flash = 'We could not login to twitter.  Twitter reported error: ' . $connection->http_code;
 			$this->redirectTo(path('root'));
 		}
 	}
@@ -90,5 +109,17 @@ class TwitterController extends ApplicationController
 	public function offline()
 	{
 		
+	}
+	/**
+	 * Logout the user
+	 *
+	 * @return void
+	 * @author Justin Palmer
+	 **/
+	public function logout()
+	{
+		unset($_SESSION['pr-plugin-twitter-id']);
+		$this->flash = 'We have logged you out.';
+		$this->redirectTo(path('root'));
 	}
 }
