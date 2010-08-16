@@ -40,36 +40,26 @@ There are a couple of items to set up.
 		 **/
 		public function authenticate()
 		{	
+			$this->user = null;
+			$this->tuser = null;
 			try{
 				if($this->params('pr-plugin-twitter-id') === null)
 					throw new Exception();
 				$this->user = new TwitterUser();
-			
+
 				$r = $this->user->find($this->params('pr-plugin-twitter-id'));
-			
+
 				$this->user->props((array)$r);
-			
+
 				$connection = new PhrailsTwitter($this->user->token, $this->user->secret);
 
 				$this->tuser = $connection->get('account/verify_credentials');
-			}catch(RecordNotFoundException $e){
-				$this->user_not_validated();
-			}catch(Exception $e){
-				$this->user_not_validated();
 			}
+			/*If we can't find the record or there is no session for this user.  Fall out.*/
+			catch(RecordNotFoundException $e){}
+			catch(Exception $e){}
 		}
 	
-		/**
-		 * If the user was not found or they do not have a valid session then we will set the vars to null
-		 *
-		 * @return void
-		 * @author Justin Palmer
-		 **/
-		private function user_not_validated()
-		{
-			$this->user = null;
-			$this->tuser = null;
-		}
 	}
 
 ### Routes
