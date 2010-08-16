@@ -4,7 +4,7 @@ This is a plugin that allows you to use phrails to authenticate with twitter.
 
 # Installation
 
-This plugin relies on twitteroauth.  It must be installed in lib/abraham
+This plugin relies on twitteroauth.  It must be cloned in lib/abraham
 
     http://github.com/abraham/twitteroauth/
 
