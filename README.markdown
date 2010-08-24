@@ -39,9 +39,7 @@ There are a couple of items to set up.
 		 * @author Justin Palmer
 		 **/
 		public function authenticate()
-		{	
-			$this->user = null;
-			$this->tuser = null;
+		{		
 			try{
 				if($this->params('pr-plugin-twitter-id') === null)
 					throw new Exception();
@@ -56,10 +54,20 @@ There are a couple of items to set up.
 				$this->tuser = $connection->get('account/verify_credentials');
 			}
 			/*If we can't find the record or there is no session for this user.  Fall out.*/
-			catch(RecordNotFoundException $e){}
-			catch(Exception $e){}
+			catch(RecordNotFoundException $e){$this->reset();}
+			catch(Exception $e){$this->reset();}
 		}
-	
+		/**
+		 * undocumented function
+		 *
+		 * @return void
+		 * @author Justin Palmer
+		 **/
+		private function reset()
+		{
+			$this->user = null;
+			$this->tuser = null;
+		}	
 	}
 
 ### Routes
